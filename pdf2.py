@@ -1,9 +1,9 @@
 import os
-import re
 import pandas as pd
 import cv2 as cv2
 import pytesseract
 from pdf2image import convert_from_path
+from PIL import Image
 
 
 pdf_name2 = os.curdir + '/files/documents_files_1135_02032020_PR-49_20_Ovchinskii_VA_Gosydarstvennaya_inspekciya_po_kontrolu_za_ispolzovaniem_obektov_nedvijimosti_goroda_Moskvi.pdf'
@@ -16,14 +16,15 @@ class PDFExtractor3():
         self.frame = pd.DataFrame()
         self.pagelist = []
         self.directory = '/files/'
+        self.output_fname = ''
 
 
 # конвертирование pdf в jpeg с разбивкой по страницам
     def convert_to_jpg(self):
-        print('Конвертируем pdf в jpeg')
+        print('Конвертируем pdf в jpeg...')
         pages = convert_from_path(self.filename, self.dpi)
         for i, page in enumerate(pages):
-            fs = os.curdir + self.directory + self.filename.split('.')[0]
+            fs = os.curdir + self.directory + self.filename.split('/')[-1].split('.')[0]
             fs = ''.join(fs+'out'+str(i)+'.jpg',)
             page.save(fs, 'JPEG')
             self.pagelist.append(fs)
@@ -31,7 +32,7 @@ class PDFExtractor3():
 
     def parse_page(self):
         recong = pd.DataFrame()
-        print('Распознаем текст на изображениях')
+        print('Распознаем текст на изображениях...')
 
         for i, p in enumerate(self.pagelist):
             im = cv2.imread(p)
@@ -47,6 +48,17 @@ class PDFExtractor3():
         self.frame.reset_index(inplace=True)
 
         return self.frame
+
+    def img2pdf(self):
+        print('Сохраняем конечный файл pdf...')
+        image_list = []
+
+        self.output_fname = os.curdir + self.directory + 'out_'+self.filename.split("/")[-1]
+        for index, filename in enumerate(self.pagelist):
+            image_list.append(Image.open(filename))
+
+        image_list[0].save(self.output_fname, "PDF", resolution=100.0, save_all=True, append_images=image_list[1:], )
+        return self.output_fname
 
 
 
@@ -66,7 +78,7 @@ class Hide_PD():
     def fill_image(self, df):
 
         for index, filename in enumerate(self.filename_list):
-            print('Закрашиваем страницу {0}'.format(index))
+            print('Закрашиваем страницу {0}...'.format(index))
             image = self.open_image(filename)
             df_temp = df[['left', 'top', 'width', 'height']][df.page_num == index]
             df_temp.reset_index(inplace=True)

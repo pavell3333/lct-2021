@@ -59,7 +59,7 @@ def token_to_tensor(token, max_review_len=40):
 
 
 def predict(value_string):
-  print('Прогнозируем сущности')
+  print('Прогнозируем сущности...')
   model = load_model()
   value_string = string_to_token(value_string)
   value_string = token_to_tensor(value_string)
