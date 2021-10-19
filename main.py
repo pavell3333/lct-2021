@@ -5,13 +5,14 @@ import tf_fio
 import os
 
 pdf_name2 = os.curdir + '/files/documents_files_1135_02032020_PR-49_20_Ovchinskii_VA_Gosydarstvennaya_inspekciya_po_kontrolu_za_ispolzovaniem_obektov_nedvijimosti_goroda_Moskvi.pdf'
-
+pdf_name2 = os.curdir + '/files/documents_docs_06102016_64-02-1201_16_Sobyanin_SS_Pechatnikov_LM.pdf'
 # app = Flask(__name__)
 #
+
 # @app.route('/')
 
-def recogn_pdf(file_name):
-    extractor = pdf.PDFExtractor3(file_name, dpi = 300)
+def recogn_pdf(file_name, dpi = 400):
+    extractor = pdf.PDFExtractor3(file_name, dpi = dpi)
     extractor.convert_to_jpg()
     df_recogn = extractor.parse_page()
     predict = tf_fio.predict(df_recogn.text)

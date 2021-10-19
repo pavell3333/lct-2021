@@ -1,5 +1,6 @@
 #LCT-2021 CASE 9 
 
+
 Need install libs
 
 !sudo apt install tesseract-ocr
@@ -7,12 +8,6 @@ Need install libs
 !pip install pytesseract
 
 !sudo apt-get install tesseract-ocr-rus
-
-!pip install pypdf2
-
-!pip install pdfminer
-
-!pip install pdfminer.six
 
 !sudo apt install poppler-utils
 

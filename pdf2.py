@@ -2,7 +2,10 @@ import os
 import pandas as pd
 import cv2 as cv2
 import pytesseract
+
+
 from pdf2image import convert_from_path
+
 from PIL import Image
 
 
@@ -21,6 +24,7 @@ class PDFExtractor3():
 
 # конвертирование pdf в jpeg с разбивкой по страницам
     def convert_to_jpg(self):
+
         print('Конвертируем pdf в jpeg...')
         pages = convert_from_path(self.filename, self.dpi)
         for i, page in enumerate(pages):
@@ -31,6 +35,7 @@ class PDFExtractor3():
 
 
     def parse_page(self):
+
         recong = pd.DataFrame()
         print('Распознаем текст на изображениях...')
 
@@ -44,7 +49,7 @@ class PDFExtractor3():
 
         self.frame.reset_index(inplace=True)
         self.frame['text'].replace(regex=True, inplace=True, to_replace=r'[^а-яА-Я]', value=r'')
-        self.frame.drop((self.frame[self.frame['text'] == ''].index) | (self.frame[self.frame['text'] == ' '].index), inplace=True, axis=0)
+        self.frame.drop((self.frame[self.frame['text'] == ''].index) | (self.frame[self.frame['text'] == ' '].index), inplace = True, axis=0)
         self.frame.reset_index(inplace=True)
 
         return self.frame
@@ -60,6 +65,11 @@ class PDFExtractor3():
         image_list[0].save(self.output_fname, "PDF", resolution=100.0, save_all=True, append_images=image_list[1:], )
         return self.output_fname
 
+    def report(self):
+
+        return ''
+
+
 
 
 class Hide_PD():
@@ -70,8 +80,16 @@ class Hide_PD():
         image = cv2.imread(filename)
         return image
 
-    def fill_rect(self, image, x,y,w,h):
-        image[y:y+h,x:x+w,:] = 0
+    def blur_image(self, image, x, y, w, h, ks1 = 71, ks2 = 71):
+
+        temp_im = image[y:y+h, x:x+w, :]
+        blurred = cv2.GaussianBlur(temp_im, (ks1, ks2), 0)
+        image[y:y+h, x:x+w, :] = blurred
+        return image
+
+
+    def fill_rect(self, image, x, y, w, h):
+        image[y:y+h, x:x+w, :] = 0
 
         return image
 
@@ -81,13 +99,15 @@ class Hide_PD():
             print('Закрашиваем страницу {0}...'.format(index))
             image = self.open_image(filename)
             df_temp = df[['left', 'top', 'width', 'height']][df.page_num == index]
-            df_temp.reset_index(inplace=True)
-            for n in range(len(df_temp)):
-                x = df_temp['left'][n]
-                y = df_temp['top'][n]
-                w = df_temp['width'][n]
-                h = df_temp['height'][n]
-                image = self.fill_rect(image, x,y,w,h)
+            if len(df_temp) > 0:
+                df_temp.reset_index(inplace=True)
+                for n in range(len(df_temp)):
+                    x = df_temp['left'][n]
+                    y = df_temp['top'][n]
+                    w = df_temp['width'][n]
+                    h = df_temp['height'][n]
+                    image = self.blur_image(image, x, y, w, h, ks1 = 101, ks2 = 101)
+                    # image = self.fill_rect(image, x,y,w,h)
             cv2.imwrite(filename, image)
 
 

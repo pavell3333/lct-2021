@@ -16,7 +16,7 @@ max_words = 34
 
 
 letters = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
-print(tf.__version__)
+print('TF version {0}'.format(tf.__version__))
 
 
 def load_tokenizer(filename = 'saved_models/tokenizer.json'):
