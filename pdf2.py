@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 import cv2 as cv2
 import pytesseract
 
@@ -22,6 +23,16 @@ class PDFExtractor3():
         self.output_fname = ''
 
 
+    def image_list(self):
+        pass
+
+        self.pagelist.append(self.filename)
+        self.output_fname = self.filename
+        # print(self.filename)
+
+
+
+
 # конвертирование pdf в jpeg с разбивкой по страницам
     def convert_to_jpg(self):
 
@@ -38,17 +49,25 @@ class PDFExtractor3():
 
         recong = pd.DataFrame()
         print('Распознаем текст на изображениях...')
+        # custom_config = r'-c tessedit_char_blacklist=0123456789 -l rus --oem 2 --psm 6'
 
         for i, p in enumerate(self.pagelist):
             im = cv2.imread(p)
             img_grey = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-            df_page = pytesseract.image_to_data(img_grey, lang='rus', output_type='data.frame')
+            img_grey = cv2.medianBlur(img_grey, 3)
+            img_grey = cv2.threshold(img_grey, 100, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
+            # kernel = np.ones((5, 5), np.uint8)
+            # img_grey = cv2.dilate(img_grey, kernel, iterations=1)
+            # img_grey = cv2.erode(img_grey, kernel, iterations=1)
+
+            df_page = pytesseract.image_to_data(img_grey, lang='rus',  output_type='data.frame')
             df_page = df_page[df_page['text'].notna()]
             df_page['page_num'] = i
             self.frame = pd.concat([self.frame, df_page])
 
         self.frame.reset_index(inplace=True)
         self.frame['text'].replace(regex=True, inplace=True, to_replace=r'[^а-яА-Я]', value=r'')
+
         self.frame.drop((self.frame[self.frame['text'] == ''].index) | (self.frame[self.frame['text'] == ' '].index), inplace = True, axis=0)
         self.frame.reset_index(inplace=True)
 
@@ -62,7 +81,7 @@ class PDFExtractor3():
         for index, filename in enumerate(self.pagelist):
             image_list.append(Image.open(filename))
 
-        image_list[0].save(self.output_fname, "PDF", resolution=100.0, save_all=True, append_images=image_list[1:], )
+        image_list[0].save(self.output_fname, "PDF", resolution=100.0, save_all=True, append_images=image_list[1:],)
         return self.output_fname
 
     def report(self):
