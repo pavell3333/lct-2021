@@ -24,10 +24,7 @@ def recogn_image(file_name, dpi = 300):
     df_recogn['flag'] = pd.Series(predict)
     hide = pdf.Hide_PD(extractor_im.pagelist)
     hide.fill_image(df_recogn[df_recogn.flag == 1])
-
-
     print('Output file {0}'.format(extractor_im.output_fname))
-
     return extractor_im.output_fname
 
 
@@ -44,13 +41,10 @@ def recogn_pdf(file_name, dpi = 300):
     extractor = pdf.PDFExtractor3(file_name, dpi = dpi)
     extractor.convert_to_jpg()
     df_recogn = extractor.parse_page()
-
     model = tf_fio.Predictor()
     l= list(df_recogn.text)
     predict = model.bst_predict(l)
-
     df_recogn['flag'] = pd.Series(predict)
-
     df_recogn.to_csv(os.curdir + '/files/recogn.csv')
     hide = pdf.Hide_PD(extractor.pagelist)
     hide.fill_image(df_recogn[df_recogn.flag == 1])

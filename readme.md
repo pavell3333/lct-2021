@@ -9,7 +9,7 @@
 !sudo apt install poppler-utils</br>
 !pip install pdf2image</br>
 !pip install python-docx</br>
-!pip install xgboos==1.5.0</br>
+!pip install xgboost==1.5.0</br>
 
 
 tensorflow download from here </br>
@@ -20,3 +20,5 @@ https://ngodata.ru/dataset/russiannames/resource/b9124ac0-9265-40db-8258-5b9cfe2
 
 Dataset Russian words</br>
 https://github.com/dkulagin/kartaslov/tree/master/dataset/emo_dict
+
+Use function in module main.py. Functions take an argument 'filename' with the file address as input and return the path to the file depersonalized document

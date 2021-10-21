@@ -61,7 +61,3 @@ class Docs():
 
 
 
-
-# doc = Docs('test.docx')
-# doc.recogn_doc()
-# doc.table_process()

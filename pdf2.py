@@ -3,14 +3,10 @@ import pandas as pd
 import numpy as np
 import cv2 as cv2
 import pytesseract
-
-
 from pdf2image import convert_from_path
-
 from PIL import Image
 
 
-pdf_name2 = os.curdir + '/files/documents_files_1135_02032020_PR-49_20_Ovchinskii_VA_Gosydarstvennaya_inspekciya_po_kontrolu_za_ispolzovaniem_obektov_nedvijimosti_goroda_Moskvi.pdf'
 
 
 class PDFExtractor3():
@@ -24,13 +20,10 @@ class PDFExtractor3():
 
 
     def image_list(self):
-        pass
 
         self.pagelist.append(self.filename)
         self.output_fname = self.filename
         # print(self.filename)
-
-
 
 
 # конвертирование pdf в jpeg с разбивкой по страницам
@@ -55,7 +48,7 @@ class PDFExtractor3():
             im = cv2.imread(p)
             img_grey = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
             img_grey = cv2.medianBlur(img_grey, 3)
-            img_grey = cv2.threshold(img_grey, 100, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
+            img_grey = cv2.threshold(img_grey, 125, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
             # kernel = np.ones((5, 5), np.uint8)
             # img_grey = cv2.dilate(img_grey, kernel, iterations=1)
             # img_grey = cv2.erode(img_grey, kernel, iterations=1)
@@ -92,7 +85,6 @@ class PDFExtractor3():
     def report(self):
 
         return ''
-
 
 
 
@@ -133,16 +125,5 @@ class Hide_PD():
                     image = self.blur_image(image, x, y, w, h, ks1 = 101, ks2 = 101)
                     # image = self.fill_rect(image, x,y,w,h)
             cv2.imwrite(filename, image)
-
-
-
-
-
-
-
-
-# ext = PDFExtractor3(pdf_name2)
-# ext.convert_to_jpg()
-# print(ext.parse_page())
 
 
