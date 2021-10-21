@@ -36,7 +36,6 @@ def load_xgb():
   filehandler = open('saved_models/xgb.pickle.dat', 'rb')
   bst = pickle.load(filehandler)
 
-
   print('Модель классификации загружена')
   return bst
 

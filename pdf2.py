@@ -84,6 +84,11 @@ class PDFExtractor3():
         image_list[0].save(self.output_fname, "PDF", resolution=100.0, save_all=True, append_images=image_list[1:],)
         return self.output_fname
 
+    def delete_temp_files(self):
+        for f in  self.pagelist:
+            os.remove(f)
+
+
     def report(self):
 
         return ''
