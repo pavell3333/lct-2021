@@ -19,6 +19,7 @@ print('XGBoost version {0}'.format(xgb.__version__))
 
 
 def load_tokenizer(filename = 'saved_models/tokenizer.json'):
+  """Функция загрузки обученного токенайзера"""
   with open(filename) as f:
     data = json.load(f)
     tokenizer = tf.keras.preprocessing.text.tokenizer_from_json(data)
@@ -26,12 +27,14 @@ def load_tokenizer(filename = 'saved_models/tokenizer.json'):
     return tokenizer
 
 def load_model():
+  """Функция загрузки обученной модели TF"""
   model = tf.keras.models.load_model('saved_models/model_fio_classificaion.h5')
   print('Модель xgboost загружена')
   return model
 
 
 def load_xgb():
+  """Функция загрузки обученной модель градиентного бустинга"""
   bst = xgb.Booster()  # init model
   filehandler = open('saved_models/xgb.pickle.dat', 'rb')
   bst = pickle.load(filehandler)
@@ -40,32 +43,10 @@ def load_xgb():
   return bst
 
 
-# def string_to_token(list_values):
-#   tokenaizer = load_tokenizer()
-#   sequences = []
-#   for w in list_values:
-#     sequences.append(np.array(tokenaizer.texts_to_sequences([w.lower()])[0]))
-#
-#   return sequences
-#
-#
-# def token_to_tensor(token, max_review_len=40):
-#   tensor = pad_sequences(token, maxlen=max_review_len)
-#   return tensor
-#
-#
-# def predict(value_string):
-#
-#   model = load_model()
-#   value_string = string_to_token(value_string)
-#   value_string = token_to_tensor(value_string)
-#   print('Прогнозируем сущности...')
-#   fio_class = np.argmax(model.predict(value_string), axis = 1)
-#   # print(fio_class)
-#   return fio_class
 
 
 class Predictor():
+  """Класс для классификации токенов"""
   def __init__(self):
 
     self.directory = '/files/'
@@ -74,6 +55,7 @@ class Predictor():
     self.tokenizer = load_tokenizer()
 
   def string_to_token(self, list_values):
+    """Переводит строковое значение слова в токен"""
     sequences = []
     for w in list_values:
       sequences.append(np.array(self.tokenizer.texts_to_sequences([w.lower()])[0]))
@@ -81,11 +63,14 @@ class Predictor():
     return sequences
 
   def token_to_tensor(self, token, max_review_len=max_review_len):
+    """Переводит токен в тензор длинной 30 символов"""
     tensor = pad_sequences(token, maxlen=max_review_len)
     return tensor
 
 
   def bst_predict(self, value_string):
+    """Функция классифицирует токен алгоритмом градиентного бустинга,
+    вызывает методы перевода строкового значения в токен и тензор """
 
     value_string = self.string_to_token(value_string)
     value_string = self.token_to_tensor(value_string)
@@ -99,6 +84,10 @@ class Predictor():
 
 
   def predict(self, value_string):
+    """Функция классифицирует токен алгоритмом рекурентной нейронной сети,
+        вызывает методы перевода строкового значения в токен и тензор """
+
+    # Решено не использовать, т.к. xgboost показывал лучшие метрики на тестировании
 
     value_string = self.string_to_token(value_string)
     value_string = self.token_to_tensor(value_string)

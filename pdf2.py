@@ -10,6 +10,7 @@ from PIL import Image
 
 
 class PDFExtractor3():
+    """Данный класс реализует методы для работы с pdf файлами. """
     def __init__(self, filename, dpi = 500):
         self.dpi = dpi
         self.filename = filename
@@ -28,6 +29,11 @@ class PDFExtractor3():
 
 # конвертирование pdf в jpeg с разбивкой по страницам
     def convert_to_jpg(self):
+        """
+        Метод предназначен для конвертирования pdf в jpg
+        Каждая страница pdf документа сохраняется в отдельный файл jpg.
+        Имя файла заносится в параметр pagelist.
+        """
 
         print('Конвертируем pdf в jpeg...')
         pages = convert_from_path(self.filename, self.dpi)
@@ -40,6 +46,13 @@ class PDFExtractor3():
 
     def parse_page(self):
 
+        """
+        Распознает текст с изображения с помощью tessract.
+        Открывает изображение в градациях серого, убирает мелкие шумы, бинаризует с некоторым порогом,
+        распознает текст, заносит информацию в DataFrame о позиции текста на изображении и его токен.
+
+        """
+
         recong = pd.DataFrame()
         print('Распознаем текст на изображениях...')
         # custom_config = r'-c tessedit_char_blacklist=0123456789 -l rus --oem 2 --psm 6'
@@ -48,10 +61,7 @@ class PDFExtractor3():
             im = cv2.imread(p)
             img_grey = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
             img_grey = cv2.medianBlur(img_grey, 3)
-            img_grey = cv2.threshold(img_grey, 125, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
-            # kernel = np.ones((5, 5), np.uint8)
-            # img_grey = cv2.dilate(img_grey, kernel, iterations=1)
-            # img_grey = cv2.erode(img_grey, kernel, iterations=1)
+            img_grey = cv2.threshold(img_grey, 25, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
 
             df_page = pytesseract.image_to_data(img_grey, lang='rus',  output_type='data.frame')
             df_page = df_page[df_page['text'].notna()]
@@ -67,6 +77,9 @@ class PDFExtractor3():
         return self.frame
 
     def img2pdf(self):
+        """
+        Метод собирает pdf файл из отдельных страниц.
+        """
         print('Сохраняем конечный файл pdf...')
         image_list = []
 
@@ -78,26 +91,39 @@ class PDFExtractor3():
         return self.output_fname
 
     def delete_temp_files(self):
+        """
+        Удаляем временные файлы
+        """
         for f in  self.pagelist:
             os.remove(f)
 
 
     def report(self):
-
-        return ''
+        """
+        Отчет о количестве найденных сущностей
+        """
+        class1 = len(self.frame[self.frame['flag']==1])
+        class0 = len(self.frame[self.frame['flag']==0])
+            # Negative  #Positive    #Total
+        return (class0, class1, len(self.frame))
 
 
 
 class Hide_PD():
+    """
+    Класс предназначен для закрашивания участка документа с персональными данными
+    """
+
     def __init__(self, filename_list):
         self.filename_list = filename_list
 
     def open_image(self, filename):
+        """Открывает изображение"""
         image = cv2.imread(filename)
         return image
 
     def blur_image(self, image, x, y, w, h, ks1 = 71, ks2 = 71):
-
+        """Размывает изображение"""
         temp_im = image[y:y+h, x:x+w, :]
         blurred = cv2.GaussianBlur(temp_im, (ks1, ks2), 0)
         image[y:y+h, x:x+w, :] = blurred
@@ -110,9 +136,10 @@ class Hide_PD():
         return image
 
     def fill_image(self, df):
+        """Открывает изображение и берет из dataframe координаты токена и вызывает функцию размывания изображения и сохраняет его"""
 
         for index, filename in enumerate(self.filename_list):
-            print('Закрашиваем страницу {0}...'.format(index))
+            print('Размываем текст на странице {0}...'.format(index))
             image = self.open_image(filename)
             df_temp = df[['left', 'top', 'width', 'height']][df.page_num == index]
             if len(df_temp) > 0:
