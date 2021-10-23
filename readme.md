@@ -4,7 +4,7 @@
 <H4>Need install libs</H4>
 
 * `!sudo apt install tesseract-ocr<`
-* `!pip install pytesseract</br>`
+* `!pip install pytesseract`
 * `!sudo apt-get install tesseract-ocr-rus`
 * `!sudo apt install poppler-utils`
 * `!pip install pdf2image`
