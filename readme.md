@@ -3,13 +3,13 @@
 
 <H4>Need install libs</H4>
 
-`!sudo apt install tesseract-ocr</br>`
-`!pip install pytesseract</br>`
-`!sudo apt-get install tesseract-ocr-rus</br>`
-`!sudo apt install poppler-utils</br>`
-`!pip install pdf2image</br>`
-`!pip install python-docx</br>`
-`!pip install xgboost==1.5.0</br>`
+* `!sudo apt install tesseract-ocr<`
+* `!pip install pytesseract</br>`
+* `!sudo apt-get install tesseract-ocr-rus`
+* `!sudo apt install poppler-utils`
+* `!pip install pdf2image`
+* `!pip install python-docx`
+* `!pip install xgboost==1.5.0`
 
 
 tensorflow download from here </br>
