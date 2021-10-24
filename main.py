@@ -80,6 +80,6 @@ if format == 'pdf':
     recogn_pdf(f_name)
 elif format == 'docx':
     recogn_doc(f_name)
-elif format in format_image:
+elif format in ALLOWED_EXTENSIONS:
     recogn_image(f_name)
 
