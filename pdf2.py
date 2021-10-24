@@ -105,7 +105,7 @@ class PDFExtractor3():
         class1 = len(self.frame[self.frame['flag']==1])
         class0 = len(self.frame[self.frame['flag']==0])
             # Negative  #Positive    #Total
-        return (class0, class1, len(self.frame))
+        return (class0, class1, class0+class1)
 
 
 

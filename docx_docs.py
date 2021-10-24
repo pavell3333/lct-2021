@@ -34,8 +34,8 @@ class Docs():
                     splits = c.text.split(' ')
                     self.find_tokens = self.find_tokens+ len(splits)
                     predict = self.model.bst_predict(splits)
-                    print(splits)
-                    print(predict)
+                    # print(splits)
+                    # print(predict)
                     for i, p in enumerate(predict):
 
                         if (p == 1) and (splits[i] != '') and (splits[i] not in black_list_sym):
@@ -58,8 +58,8 @@ class Docs():
                 splits = run.text.split(' ')
                 self.find_tokens = self.find_tokens + len(splits)
                 predict = self.model.bst_predict(splits)
-                print(splits)
-                print(predict)
+                # print(splits)
+                # print(predict)
                 for i, p in enumerate(predict):
                     if (p == 1) and (splits[i]!='') and (splits[i] not in black_list_sym):
                         splits[i] =text_to_replace
@@ -79,9 +79,11 @@ class Docs():
 
     def recogn_doc(self):
         """Метод сохраняет документ"""
+
         self.paragraph_process()
         self.table_process()
         self.output_fname = os.curdir + self.directory + 'out_' + self.filename.split("/")[-1]
+        print("Сохраняем файл {0}".format(self.output_fname))
         self.doc.save(self.output_fname)
         return self.output_fname
 
